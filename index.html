@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OTPSPAMMER</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Include SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-snowfall/1.7.5/snowfall.jquery.min.css">
+    <!-- Include Particle.js CSS -->
+    <style>
+        body {
+            background: linear-gradient(45deg, #f06292, #ba68c8, #9575cd, #64b5f6, #4fc3f7, #4dd0e1, #4db6ac, #81c784, #aed581, #dce775, #fff176, #ffd54f);
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .centered {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .text-center {
+            color: #4527a0;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: #4527a0;
+            border-color: #4527a0;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            transform: scale(1);
+            transition: transform 0.3s;
+        }
+
+        .btn-primary:before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, #f06292, #ba68c8, #9575cd, #64b5f6, #4fc3f7, #4dd0e1, #4db6ac, #81c784, #aed581, #dce775, #fff176, #ffd54f);
+            background-size: 200% 200%;
+            background-position: 0 0;
+            transform: rotate(-45deg);
+            transition: all 0.6s;
+            z-index: -1;
+        }
+
+        .btn-primary:hover:before {
+            top: 0;
+            left: 0;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.1);
+        }
+
+        .rainbow-text {
+            background: -webkit-linear-gradient(45deg, #f06292, #ba68c8, #9575cd, #64b5f6, #4fc3f7, #4dd0e1, #4db6ac, #81c784, #aed581, #dce775, #fff176, #ffd54f);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .snowfall-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Additional styles for fun effects */
+        .floating-text {
+            animation: floatText 3s infinite;
+        }
+
+        @keyframes floatText {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        
+    </style>
+    <!-- Include Particle.js Library -->
+    <script src="https://cdn.jsdelivr.net/particlejs/1.0.0/particle.min.js"></script>
+</head>
+<body>
+    <div class="snow"></div>
+    <div id="particles-js"></div> <!-- Particle Animation -->
+    <div class="centered">
+        <div class="container">
+            <h1 class="text-center">Spam OTP</h1>
+            
+            <form id="jsonForm">
+                <div class="form-group">
+                    <label for="phone">หมายเลขโทรศัพท์:</label>
+                    <input type="text" class="form-control" id="phone" name="phone" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block rainbow-btn floating-text" disabled>
+                    <span class="rainbow-text">ยืนยัน</span>
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="snowfall-container"></div>
+
+    <!-- Include jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Include SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <!-- Include Snowfall JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-snowfall/1.7.5/snowfall.jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var $phoneInput = $('#phone');
+            var $submitButton = $('.btn-primary');
+            var $container = $('.container');
+        
+            $phoneInput.on('input', function() {
+                if ($phoneInput.val().trim().length >= 10) {
+                    $submitButton.prop('disabled', false);
+                } else {
+                    $submitButton.prop('disabled', true);
+                }
+            });
+        
+            $container.mousemove(function(event) {
+                var btnOffset = $submitButton.offset();
+                var mouseX = event.pageX - btnOffset.left;
+                var mouseY = event.pageY - btnOffset.top;
+        
+                if ($phoneInput.val().trim().length >= 10 &&
+                    mouseX >= 0 && mouseX <= $submitButton.width() &&
+                    mouseY >= 0 && mouseY <= $submitButton.height()) {
+                    $submitButton.addClass('rainbow-btn');
+                } else {
+                    $submitButton.removeClass('rainbow-btn');
+                }
+            });
+        
+            $('#jsonForm').submit(function(event) {
+                event.preventDefault();
+        
+                var phone = $phoneInput.val().trim();
+                var jsonData = { "phone": phone };
+        
+                if (phone.length >= 10) {
+                    $submitButton.prop('disabled', true); // Disable the button during processing
+                    $submitButton.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> กำลังส่ง...');
+                    
+                    $.ajax({
+                        type: "POST",
+                        url: "/post_json",
+                        contentType: "application/json",
+                        data: JSON.stringify(jsonData),
+                        success: function(response) {
+                            if (response.status === 200) {
+                                showSuccessAlert(response.message);
+                            } else {
+                                showErrorAlert(response.message);
+                            }
+                        },
+                        error: function(error) {
+                            showErrorAlert("เกิดข้อผิดพลาด");
+                        },
+                        complete: function() {
+                            $submitButton.prop('disabled', false); // Re-enable the button
+                            $submitButton.html('<span class="rainbow-text">ยืนยัน</span>'); // Reset button text
+                        }
+                    });
+                } else {
+                    showErrorAlert("กรุณากรอกหมายเลขโทรศัพท์ให้ครบ 10 หลัก");
+                }
+            });
+        
+            function showSuccessAlert(message) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'สำเร็จ!',
+                    text: message
+                });
+            }
+        
+            function showErrorAlert(message) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'โอ้ว...',
+                    text: message
+                });
+            }
+        
+        
+            // Snowfall
+            $('.snowfall-container').snowfall({flakeCount: 100, minSize: 1, maxSize: 5});
+        
+            // Particle Animation
+            particlesJS('particles-js', {
+                particles: {
+                    number: {
+                        value: 80,
+                        density: {
+                            enable: true,
+                            value_area: 800
+                        }
+                    },
+                    color: {
+                        value: '#ffffff'
+                    },
+                    shape: {
+                        type: 'circle',
+                        stroke: {
+                            width: 0,
+                            color: '#000000'
+                        },
+                        polygon: {
+                            nb_sides: 5
+                        },
+                        image: {
+                            src: 'img/github.svg',
+                            width: 100,
+                            height: 100
+                        }
+                    },
+                    opacity: {
+                        value: 0.5,
+                        random: false,
+                        anim: {
+                            enable: false,
+                            speed: 1,
+                            opacity_min: 0.1,
+                            sync: false
+                        }
+                    },
+                    size: {
+                        value: 3,
+                        random: true,
+                        anim: {
+                            enable: false,
+                            speed: 40,
+                            size_min: 0.1,
+                            sync: false
+                        }
+                    },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: '#ffffff',
+                        opacity: 0.4,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 6,
+                        direction: 'none',
+                        random: false,
+                        straight: false,
+                        out_mode: 'out',
+                        bounce: false,
+                        attract: {
+                            enable: false,
+                            rotateX: 600,
+                            rotateY: 1200
+                        }
+                    }
+                },
+                interactivity: {
+                    detect_on: 'canvas',
+                    events: {
+                        onhover: {
+                            enable: true,
+                            mode: 'repulse'
+                        },
+                        onclick: {
+                            enable: true,
+                            mode: 'push'
+                        },
+                        resize: true
+                    },
+                    modes: {
+                        grab: {
+                            distance: 400,
+                            line_linked: {
+                                opacity: 1
+                            }
+                        },
+                        bubble: {
+                            distance: 400,
+                            size: 40,
+                            duration: 2,
+                            opacity: 8,
+                            speed: 3
+                        },
+                        repulse: {
+                            distance: 100
+                        },
+                        push: {
+                            particles_nb: 4
+                        },
+                        remove: {
+                            particles_nb: 2
+                        }
+                    }
+                },
+                retina_detect: true
+            });
+        });
+    </script>
+</body>
+</html>

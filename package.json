@@ -1,0 +1,18 @@
+{
+  "name": "spamotp",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "axios": "^1.5.0",
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "firebase-admin": "^11.10.1",
+    "node-fetch": "^3.3.2"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": "18.17.1"
+  }
+}
